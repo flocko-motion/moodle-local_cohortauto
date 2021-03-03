@@ -52,6 +52,7 @@ if ($hassiteconfig) { // Needs this condition or there is error on login page.
         profile_load_data($usrhelper);
         profile_load_custom_fields($usrhelper);
         $fldlist = cohortauto_prepare_profile_data($usrhelper);
+        $fldlist['roles'] = 'roles';
 
         // Additional values for email.
         if (!empty($fldlist['email'])) {

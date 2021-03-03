@@ -214,6 +214,7 @@ class local_cohortauto_handler {
         profile_load_custom_fields($user);
         $userprofiledata = cohortauto_prepare_profile_data($user, $this->config->secondrule_fld);
 
+
         // Additional values for email.
         list($emailusername, $emaildomain) = explode("@", $userprofiledata['email']);
 

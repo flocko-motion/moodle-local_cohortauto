@@ -22,12 +22,12 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Auto-cohort plugin';
+$string['pluginname'] = 'Auto-Cohort plugin';
 $string['plugindescription'] = 'This plugin provides a way to automatically add users into cohorts.';
 
 // Admin strings.
-$string['label_cohortautotool'] = 'CohortAuto conversion operations';
-$string['label_cohortautoview'] = 'CohortAuto viewer';
+$string['label_cohortautotool'] = 'Auto-Cohort conversion operations';
+$string['label_cohortautoview'] = 'Auto-Cohort viewer';
 
 // View strings.
 $string['selectcohort'] = 'Select cohort';
