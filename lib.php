@@ -50,7 +50,7 @@ function cohortauto_prepare_profile_data($data, $replaceempty = 'EMPTY') {
                     } else {
                         $str = ($val === true) ? 'true' : format_string("$val");
                     }
-                    $newdata[$key] = substr($str, 0, 2048);
+                    $newdata[$key] = substr($str, 0, 100);
                 }
             }
         }
@@ -194,11 +194,6 @@ class local_cohortauto_handler {
             return;
         };
 
-        // Ignore users with no email address (probably UNIT tests.)
-        if (empty($user->email)) {
-            return;
-        }
-
         // Get cohorts.
         $params = array(
             'contextid' => $context->id,
@@ -236,6 +231,15 @@ class local_cohortauto_handler {
             'domain' => $emaildomain,
             'rootdomain' => $emailrootdomain
         );
+
+        // get user roles
+        $roles = [];
+        $roleslist = get_users_roles($context, [$user->id,]);
+        foreach ($roleslist as $item) {
+            foreach ($item as $role) array_push($roles, $role->shortname);
+        }
+        $userprofiledata['roles'] = implode(' ', $roles);
+
 
         // Set delimiter in use.
         $delimiter = $this->config->delim;
@@ -281,22 +285,41 @@ class local_cohortauto_handler {
 
         // Apply templates and process the user's cohort memberships.
         foreach ($templates as $cohort) {
+            // If template starts with "!" it will only assign to existing cohorts
+            if (strpos($cohort, "!") === false) {
+                $createnonexisting = true;
+            } else {
+                $cohort = substr($cohort, 1);
+                $createnonexisting = false;
+            }
             // Transform templates into cohort names with Mustache.
             $cohortname = $this->mustache->render($cohort, $userprofiledata);
             // Apply symbol replacements as necessary.
             $cohortname = (!empty($replacements)) ? strtr($cohortname, $replacements) : $cohortname;
 
+            // Apply regex filter and replacement
+            $parts = explode("/", $cohortname);
+            if (sizeof($parts) > 1) {
+                if (preg_match('/'.$parts[1].'/i', $parts[0])) {
+                    if (sizeof($parts) == 3) {
+                        $cohortname = $parts[2];
+                    }
+                } else {
+                    continue;
+                }
+            }
+
             // Skip empty cohort names. Users with no cohort name should not be assigned.
             if ($cohortname == '') {
                 continue;
             };
-
             $cid = array_search($cohortname, $cohortslist);
+//            echo "+" .$cohortname." ";
             if ($cid !== false) {
                 if (!$DB->record_exists('cohort_members', array('cohortid' => $cid, 'userid' => $user->id))) {
                     cohort_add_member($cid, $user->id);
                 };
-            } else {
+            } else if ($createnonexisting) {
                 // Cohort with this name does not exist, so create a new one.
                 $newcohort = new stdClass();
                 $newcohort->name = $cohortname;

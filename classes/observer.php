@@ -60,4 +60,33 @@ class local_cohortauto_observer {
             $handler->user_profile_hook($user);
         }
     }
+
+    /**
+     * Observer function to handle user role change event
+     * @param \core\event\role_assigned $event
+     */
+    public static function role_assigned(\core\event\role_assigned $event) {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . '/local/cohortauto/lib.php');
+        $eventdata = $event->get_data();
+        $handler = new local_cohortauto_handler();
+        if ($user = $DB->get_record('user', array('id' => $eventdata['relateduserid']))) {
+            $handler->user_profile_hook($user);
+        }
+    }
+
+    /**
+     * Observer function to handle user role change event
+     * @param \core\event\role_unassigned $event
+     */
+    public static function role_unassigned(\core\event\role_unassigned $event) {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . '/local/cohortauto/lib.php');
+        $eventdata = $event->get_data();
+        $handler = new local_cohortauto_handler();
+        if ($user = $DB->get_record('user', array('id' => $eventdata['relateduserid']))) {
+            $handler->user_profile_hook($user);
+        }
+    }
+
 }

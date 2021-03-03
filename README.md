@@ -7,6 +7,10 @@ This plugin requires Moodle 3.5 or greater (using PHP 7 or greater).
 
 Auto-created cohorts are made in the top-level system context (CONTEXT_SYSTEM).
 
+# This branch
+
+This branch added regex functionality to templates
+
 
 ## Migrating cohorts from the `auth_mcae` plugin
 

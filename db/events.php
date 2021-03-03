@@ -24,12 +24,22 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$observers = array (
-    array(
+$observers = [
+    [
         'eventname' => '\core\event\user_created',
         'callback' => 'local_cohortauto_observer::user_created'
-    ),
-    array(
+    ],
+    [
         'eventname' => '\core\event\user_updated',
         'callback' => 'local_cohortauto_observer::user_updated'
-    ));
+    ],
+    // #PATCH-FLO: added event to listen to user role changes
+    [
+        'eventname' => '\core\event\role_assigned',
+        'callback' => 'local_cohortauto_observer::role_assigned'
+    ],
+    [
+        'eventname' => '\core\event\role_unassigned',
+        'callback' => 'local_cohortauto_observer::role_unassigned'
+    ],
+];
